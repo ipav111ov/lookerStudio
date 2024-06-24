@@ -1,5 +1,7 @@
 const batchSize = 100;
 const ss = SpreadsheetApp.getActiveSpreadsheet();
+const hello = 'hi';
+
 
 function getTeams() {
   const sheetName = 'TeamsList';
