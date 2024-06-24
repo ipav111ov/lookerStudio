@@ -1,6 +1,7 @@
 const batchSize = 100;
 const ss = SpreadsheetApp.getActiveSpreadsheet();
 const hello = 'hi';
+const why = 1;
 
 
 function getTeams() {
