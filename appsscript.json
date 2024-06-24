@@ -1,0 +1,17 @@
+{
+  "timeZone": "Asia/Tbilisi",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dataStudio": {
+    "name": "test Weather",
+    "logoUrl": "https://banner2.cleanpng.com/20180215/tyq/kisspng-inside-weather-look-at-weather-clip-art-drum-set-clipart-5a85ceec4ded51.7522568915187187003192.jpg",
+    "company": "Ilia Pavlov",
+    "addonUrl": "google.com",
+    "supportUrl": "google.com",
+    "description": "Just a test connector"
+  },
+  "webapp": {
+    "executeAs": "USER_ACCESSING",
+    "access": "ANYONE"
+  }
+}
