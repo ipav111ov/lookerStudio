@@ -1,7 +1,8 @@
 function main() {
   // getModifiedFeedbackForDb()
-  uploadDataToDb('emails');
+  uploadDataToDb('email');
 };
+
 
 function connectToSql() {
   const url = PropertiesService.getScriptProperties().getProperty('MSurl');
@@ -42,7 +43,7 @@ function addStatementEmail(stmt, row) {
 
 
 function cleanFeedback_temp() {
-  const sqlToDelete =
+  const msSqlToDelete =
     `
 MERGE INTO feedback AS target
 USING feedback_temp AS s
@@ -57,9 +58,13 @@ ON feedback_temp.uid_member = feedback.uid_member
     AND feedback_temp.date_order = feedback.date_order
     AND feedback_temp.id_order = feedback.id_order; 
 `
+
+  const mySqlToDelete = `
+REPLACE или IGNORE INTO feedback (uid_member, date_order, id_order, type_order, square, cameras, spent_time, mark, is_recipient, is_creator, is_shared, is_converter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+`
   try {
     const conn = connectToSql();
-    const stmt = conn.prepareStatement(sqlToDelete)
+    const stmt = conn.prepareStatement(msSqlToDelete)
     stmt.execute();
     Logger.log('feedback_temp cleaned')
   } catch (e) {
@@ -75,7 +80,7 @@ function uploadDataToDb(type) {
     conn.setAutoCommit(false);
 
     if (type === 'email') {
-      const sheetName = 'emails';
+      const sheetName = 'emailsForDb';
       const sheet = ss.getSheetByName(sheetName);
       const sheetToLog = ss.getSheetByName('batchSpeedLog');
       sheetToLog.clear();

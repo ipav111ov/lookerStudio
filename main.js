@@ -1,9 +1,10 @@
 const batchSize = 100;
 const ss = SpreadsheetApp.openById('1PX1CT1XL7dz5_T_wbFdOaeIqCWDig2HpPJxWtRVh9Io');
 
-function start(){
+function emails() {
   const teams = getTeams();
   prepareEmailsForDb(teams)
+  getEmailsForDb()
 }
 function getTeams() {
   const sheetName = 'TeamsList';
@@ -152,9 +153,10 @@ function getValuesForBatchForDb(values) {
 
 function getEmailsForDb() {
   const sheetName = 'emails'
+  const sheetNameForWrite = 'emailsforDb'
   const sheet = ss.getSheetByName(sheetName);
   const values = sheet.getDataRange().getValues().slice(1);
-  const outputArray = [];
+  const outputArray = [['uid_member', 'email']];
   for (const row of values) {
     const email = row[0];
     const members = String(row[1]);
@@ -166,6 +168,12 @@ function getEmailsForDb() {
       };
     };
   }
+  if (!ss.getSheetByName(sheetNameForWrite)) {
+    ss.insertSheet(sheetNameForWrite)
+    SpreadsheetApp.flush()
+  };
+  const sModified = ss.getSheetByName(sheetNameForWrite);
+  sModified.getRange(sModified.getLastRow() + 1, 1, outputArray.length, outputArray[0].length).setValues(outputArray);
   return outputArray;
 }
 
