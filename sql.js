@@ -1,6 +1,6 @@
 function main() {
   // getModifiedFeedbackForDb()
-  uploadDataToDb('');
+  uploadDataToDb('emails');
 };
 
 function connectToSql() {
@@ -39,6 +39,33 @@ function addStatementEmail(stmt, row) {
   stmt.setString(2, row[1]);
   stmt.addBatch();
 };
+
+
+function cleanFeedback_temp() {
+  const sqlToDelete =
+    `
+MERGE INTO feedback AS target
+USING feedback_temp AS s
+ON(target.uid_member = s.uid_member AND target.date_order = s.date_order AND target.id_order = s.id_order)
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(uid_member, date_order, id_order, type_order, square, cameras, spent_time, mark, is_recipient, is_creator, is_shared, is_converter)
+VALUES(s.uid_member, s.date_order, s.id_order, s.type_order, s.square, s.cameras, s.spent_time, s.mark, s.is_recipient, s.is_creator, s.is_shared, s.is_converter);
+   
+DELETE FROM feedback_temp
+FROM feedback_temp JOIN feedback
+ON feedback_temp.uid_member = feedback.uid_member
+    AND feedback_temp.date_order = feedback.date_order
+    AND feedback_temp.id_order = feedback.id_order; 
+`
+  try {
+    const conn = connectToSql();
+    const stmt = conn.prepareStatement(sqlToDelete)
+    stmt.execute();
+    Logger.log('feedback_temp cleaned')
+  } catch (e) {
+    Logger.log('Error' + e.message)
+  }
+}
 
 
 function uploadDataToDb(type) {
@@ -158,7 +185,7 @@ function uploadDataToDb(type) {
         }
         const logValues = (new Date() - start) / 1000;
         start = new Date()
-        const stmt = conn.prepareStatement('INSERT INTO feedback (uid_member, date_order, id_order, type_order, square, cameras, spent_time, mark, is_recipient, is_creator, is_shared, is_converter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        const stmt = conn.prepareStatement('INSERT INTO feedback_temp (uid_member, date_order, id_order, type_order, square, cameras, spent_time, mark, is_recipient, is_creator, is_shared, is_converter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         const logStmt = (new Date() - start) / 1000;
 
         while (batchSizeCount <= batchSize && batchSizeCount < data.length) {

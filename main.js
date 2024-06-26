@@ -1,9 +1,10 @@
 const batchSize = 100;
-const ss = SpreadsheetApp.getActiveSpreadsheet();
-const hello = 'hi';
-const why = 1;
+const ss = SpreadsheetApp.openById('1PX1CT1XL7dz5_T_wbFdOaeIqCWDig2HpPJxWtRVh9Io');
 
-
+function start(){
+  const teams = getTeams();
+  prepareEmailsForDb(teams)
+}
 function getTeams() {
   const sheetName = 'TeamsList';
   Logger.log('Creating teams...');
@@ -74,9 +75,9 @@ function prepareEmailsForDb(teams) {
     const membersArray = Object.keys(teams[leader]).map((member) => {
 
       if (leader !== member) {
-        memberArray.push([teams[leader][member], modifyUid(member)])
+        memberArray.push([teams[leader][member], member])
       }
-      return modifyUid(member)
+      return member
     })
 
     emailMembersArray[1] = membersArray.join();
